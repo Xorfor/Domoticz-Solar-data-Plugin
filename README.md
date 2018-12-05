@@ -1,0 +1,1 @@
+# Domoticz-Solar-data-Plugin
