@@ -27,13 +27,17 @@ class BasePlugin:
     __DEBUG_ALL = 1
 
     __HEARTBEATS2MIN = 6
-    __MINUTES = 1  # or use a parameter
+    __MINUTES = 1  # Updated devices in this interval, or use a parameter
 
-    # __API_URL = "https://api.openuv.io/api/v1/uv?lat={}&lng={}"
+    # API urls
     __API_DOMAIN1 = "https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json"
     __API_DOMAIN2 = "https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json"
     __API_DOMAIN3 = "https://services.swpc.noaa.gov/products/summary/10cm-flux.json"
     __API_DOMAIN4 = "https://services.swpc.noaa.gov/products/noaa-scales.json"
+    # Alternatives for the following url:
+    #   https://services.swpc.noaa.gov/products/noaa-estimated-planetary-k-index-1-minute.json
+    #   https://services.swpc.noaa.gov/json/boulder_k_index_1m.json
+    __API_DOMAIN5 = "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json"
     __API_VERSION = ""
     __API_PARAMETERS = ""
     __API_HEADER = ""
@@ -46,10 +50,13 @@ class BasePlugin:
     __UNIT_R = 5
     __UNIT_S = 6
     __UNIT_G = 7
+    __UNIT_KP = 8
 
     __UNITS = [
         # Unit, Name, Type, Subtype, Options, Used
         # IMF: Interplanetary Magnetic Field
+        # Auroral activity
+        [__UNIT_KP, "Kp-index", 243, 31, {}, 1],
         # IMF Strength: BT nT
         [__UNIT_BT, "Bt", 243, 31, {"Custom": "0;nT"}, 1],
         # IMF Direction: Bz (south) nT
@@ -181,7 +188,8 @@ class BasePlugin:
                 Domoticz.Debug("value: " + str(value))
                 scale = int(value.get("G").get("Scale"))
                 Domoticz.Debug("scale " + str(scale))
-                Domoticz.Debug("G: {} - {}".format(scale, self.__SCALES[scale]))
+                Domoticz.Debug(
+                    "G: {} - {}".format(scale, self.__SCALES[scale]))
                 UpdateDevice(self.__UNIT_G,
                              max(0, scale - 1),
                              self.__SCALES[scale],
@@ -195,6 +203,17 @@ class BasePlugin:
                 UpdateDevice(self.__UNIT_S,
                              max(0, scale - 1),
                              self.__SCALES[scale],
+                             TimedOut=0)
+            Domoticz.Debug("Get data from: " + self.__API_DOMAIN5)
+            lines = getData(self.__API_DOMAIN5, self.__API_HEADER)
+            if lines is not None:
+                lines = sorted(lines, key=lambda k: k.get(
+                    'time_tag', 0), reverse=True)
+                kp = lines[0].get("kp_index")
+                Domoticz.Debug("first line: {}".format(lines[0]))
+                UpdateDevice(self.__UNIT_KP,
+                             kp,
+                             str(kp),
                              TimedOut=0)
         else:
             Domoticz.Debug("onHeartbeat called, run again in " +
