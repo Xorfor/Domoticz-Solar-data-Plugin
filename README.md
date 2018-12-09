@@ -6,7 +6,7 @@ This Domoticz plugin retrieves data from https://www.swpc.noaa.gov/
 | :---                   | :---
 | Bt                     | Interplanetary Magnetic Field 
 | Bz                     | Interplanetary Magnetic Field (North)
-| Solar Wind Speed       | Speed of the solar wind
+| Solar Wind Speed       | Speed of the solar wind in km/s
 | Flux                   |
 | Kp-index               |
 | Radio Blackouts        | https://www.swpc.noaa.gov/noaa-scales-explanation

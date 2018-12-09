@@ -6,7 +6,7 @@
 # Author: Xorfor
 #
 """
-<plugin key="xfr_spaceweather" name="Space Weather" author="Xorfor" version="1.0.0" wikilink="https://github.com/Xorfor/Domoticz-Space-Weather-Plugin">
+<plugin key="xfr_spaceweather" name="Space Weather" author="Xorfor" version="0.1.0" wikilink="https://github.com/Xorfor/Domoticz-Space-Weather-Plugin">
     <params>
         <param field="Mode6" label="Debug" width="75px">
             <options>
